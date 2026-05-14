@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Special Thanks & Credits</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    background: linear-gradient(135deg, #dcefff, #b7d9ff, #7ab8ff);
+    color:#123456;
+    overflow-x:hidden;
+    min-height:100vh;
+}
+
+/* Background Glow */
+body::before{
+    content:"";
+    position:fixed;
+    width:500px;
+    height:500px;
+    background: radial-gradient(circle, rgba(0,119,255,0.35), transparent);
+    top:-120px;
+    left:-120px;
+    filter:blur(120px);
+    z-index:-1;
+}
+
+body::after{
+    content:"";
+    position:fixed;
+    width:450px;
+    height:450px;
+    background: radial-gradient(circle, rgba(255,255,255,0.9), transparent);
+    bottom:-150px;
+    right:-100px;
+    filter:blur(120px);
+    z-index:-1;
+}
+
+.container{
+    max-width:950px;
+    margin:auto;
+    padding:35px 20px;
+    animation:fadeIn 1s ease;
+}
+
+h1{
+    text-align:center;
+    font-size:36px;
+    color:#0066cc;
+    margin-bottom:20px;
+    text-shadow:0 0 12px rgba(0,102,204,0.25);
+}
+
+.intro{
+    text-align:center;
+    margin-bottom:30px;
+    line-height:1.8;
+    font-size:15px;
+}
+
+h2{
+    margin-top:30px;
+    color:#00509d;
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+/* Card */
+.box{
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(14px);
+    border:1px solid rgba(255,255,255,0.7);
+    padding:22px;
+    border-radius:20px;
+    transition:0.3s ease;
+    box-shadow:0 8px 22px rgba(0,0,0,0.08);
+}
+
+.box:hover{
+    transform:translateY(-5px);
+    box-shadow:0 15px 30px rgba(0,102,204,0.15);
+}
+
+.highlight{
+    color:#0077ff;
+    font-weight:700;
+    font-size:20px;
+    text-shadow:0 0 8px rgba(0,119,255,0.25);
+}
+
+p{
+    line-height:1.9;
+    font-size:15px;
+}
+
+ul{
+    margin-left:20px;
+}
+
+li{
+    margin-top:8px;
+    line-height:1.7;
+}
+
+/* Footer */
+footer{
+    text-align:center;
+    margin-top:50px;
+    color:#24527a;
+    opacity:0.8;
+    font-size:13px;
+}
+
+/* Animation */
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* Responsive */
+@media(max-width:600px){
+
+    h1{
+        font-size:28px;
+    }
+
+    .container{
+        padding:25px 15px;
+    }
+
+    .box{
+        padding:18px;
+    }
+
+    p, li{
+        font-size:14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>✨ SPECIAL THANKS & CREDITS ✨</h1>
+
+    <p class="intro">
+        Dengan rasa syukur dan penuh terima kasih, saya ingin mengucapkan apresiasi 
+        kepada semua orang yang sudah mendukung perjalanan pembuatan project ini.
+        Mulai dari memberi semangat, membantu saat ada kesulitan, sampai menjadi tempat 
+        berbagi ide dan pengalaman selama proses pengembangan berlangsung.
+    </p>
+
+    <h2>👤 Creator</h2>
+    <div class="box">
+        <p>Project ini dibuat dan dikembangkan oleh:</p>
+        <br>
+
+        <p class="highlight">Al Arifky Hastri Putra</p>
+
+        <br>
+
+        <p>
+            Sebuah project yang dibuat dari proses belajar, rasa penasaran, 
+            dan keinginan untuk terus berkembang. Banyak waktu, tenaga, 
+            dan pengalaman yang diberikan selama proses pembuatan project ini 
+            hingga bisa sampai di tahap sekarang.
+        </p>
+
+        <br>
+
+        <p>
+            Walaupun masih memiliki banyak kekurangan, project ini diharapkan 
+            bisa menjadi sesuatu yang bermanfaat dan terus berkembang menjadi lebih baik ke depannya.
+        </p>
+
+        <br>
+
+        <p><b>Studio:</b> Studio Chiutchiyu, Pela</p>
+    </div>
+
+    <h2>🤝 Support System</h2>
+    <div class="box">
+        <ul>
+            <li>Teman-teman Discord yang selalu memberikan dukungan dan ide baru</li>
+            <li>Teman-teman Informatika yang membantu dalam belajar dan diskusi</li>
+            <li>Semua pihak yang pernah memberi masukan, kritik, maupun semangat</li>
+        </ul>
+    </div>
+
+    <h2>🏫 Pendidikan & Bimbingan</h2>
+    <div class="box">
+        <ul>
+            <li>SMA Negeri 1 Bengkayang sebagai tempat belajar dan berkembang</li>
+            <li>Pak Aji yang telah memberikan arahan dan dukungan selama proses belajar</li>
+        </ul>
+    </div>
+
+    <h2>📍 Lokasi & Identitas</h2>
+    <div class="box">
+        <p>
+            <span class="highlight">Bengkayang, Indonesia</span>
+        </p>
+
+        <br>
+
+        <p>
+            Menjadi bagian dari perjalanan dan sumber semangat dalam berkarya.
+        </p>
+    </div>
+
+    <h2>🚀 Pengembangan ke Depan</h2>
+    <div class="box">
+        <p>
+            Project ini akan terus diperbaiki dan dikembangkan seiring bertambahnya pengalaman 
+            dan pengetahuan. Akan ada fitur baru, tampilan yang lebih baik, 
+            dan peningkatan lainnya di masa depan.
+        </p>
+    </div>
+
+    <h2>💬 Penutup</h2>
+    <div class="box">
+        <p>
+            Terima kasih untuk semua dukungan yang sudah diberikan.
+            Dukungan kecil sekalipun sangat berarti dalam proses pengembangan project ini.
+        </p>
+
+        <br>
+
+        <p>
+            Semoga project ini bisa memberikan manfaat dan menjadi langkah awal 
+            untuk karya-karya berikutnya.
+        </p>
+
+        <br>
+
+        <p><b>Terima kasih 🙏</b></p>
+    </div>
+
+    <footer>
+        © 2026 - Project Credits
+    </footer>
+
+</div>
+
+</body>
+</html>
