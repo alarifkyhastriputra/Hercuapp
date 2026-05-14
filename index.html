@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HERCU OTG</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<style>
+
+:root{
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --text:#1e1e2f;
+  --primary:#6c5ce7;
+}
+
+body.dark{
+  --bg:#121212;
+  --card:#1e1e2f;
+  --text:#ffffff;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:sans-serif;
+}
+
+.header{
+  background:var(--primary);
+  color:white;
+  padding:18px;
+  text-align:center;
+  font-weight:bold;
+  position:relative;
+  font-size:20px;
+}
+
+.mode,.lock{
+  position:absolute;
+  top:15px;
+  cursor:pointer;
+  font-size:20px;
+}
+
+.mode{
+  left:15px;
+}
+
+.lock{
+  right:15px;
+}
+
+.container{
+  max-width:520px;
+  margin:auto;
+  padding:15px;
+}
+
+.card{
+  background:var(--card);
+  padding:16px;
+  border-radius:14px;
+  margin-bottom:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+input,select,button{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-size:15px;
+}
+
+button{
+  background:var(--primary);
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
+.option{
+  background:#eef;
+  padding:10px;
+  border-radius:10px;
+  margin-top:8px;
+}
+
+.previewGambar{
+  width:100%;
+  margin-top:10px;
+  border-radius:12px;
+}
+
+#overlay{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+.popup{
+  width:90%;
+  max-width:400px;
+  display:none;
+}
+
+#toast{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#333;
+  color:white;
+  padding:12px 20px;
+  border-radius:10px;
+  opacity:0;
+  transition:0.3s;
+  z-index:9999;
+}
+
+#toast.show{
+  opacity:1;
+  bottom:50px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+HERCU OTG
+
+<span class="mode" onclick="toggleMode()">🌙</span>
+
+<span class="lock" onclick="bukaGuru()">🔒</span>
+
+</div>
+
+<div id="overlay" onclick="tutupPopup()">
+
+<div id="popupGuru"
+class="card popup"
+onclick="event.stopPropagation()">
+
+<h3>Login / Daftar Guru</h3>
+
+<input id="guruNama"
+placeholder="Nama Guru">
+
+<input id="guruPass"
+type="password"
+placeholder="Password">
+
+<button onclick="loginGuru()">
+Login
+</button>
+
+<button onclick="daftarGuru()">
+Daftar
+</button>
+
+</div>
+
+<div id="popupConfirm"
+class="card popup"
+onclick="event.stopPropagation()">
+
+<h3 id="confirmText">
+Yakin?
+</h3>
+
+<button onclick="yesConfirm()">
+Ya
+</button>
+
+<button onclick="tutupPopup()">
+Batal
+</button>
+
+</div>
+
+</div>
+
+<div class="container">
+
+<div id="loginBox" class="card">
+
+<h3>Login Murid</h3>
+
+<input id="namaInput"
+placeholder="Nama Lengkap">
+
+<input id="kodeRoomMurid"
+placeholder="Kode Room">
+
+<select id="kelasInput">
+
+<option value="">Pilih Kelas</option>
+
+<option>10A</option>
+<option>10B</option>
+<option>10C</option>
+<option>10D</option>
+<option>10E</option>
+<option>10F</option>
+<option>10G</option>
+
+<option>11A</option>
+<option>11B</option>
+<option>11C</option>
+<option>11D</option>
+<option>11E</option>
+<option>11F</option>
+<option>11G</option>
+
+<option>12A</option>
+<option>12B</option>
+<option>12C</option>
+<option>12D</option>
+<option>12E</option>
+<option>12F</option>
+<option>12G</option>
+
+</select>
+
+<button onclick="login()">
+Masuk
+</button>
+
+</div>
+
+<div id="menuBox"></div>
+
+<div id="contentBox"></div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+const firebaseConfig={
+apiKey:"AIzaSy...",
+databaseURL:"https://projectchat01-d16bc-default-rtdb.firebaseio.com"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db=firebase.database();
+
+let user="";
+let role="";
+let kelas="";
+let guruId="";
+let currentMapel="";
+let soalRandom=[];
+let sudahKirim=false;
+let confirmAction=null;
+let nilaiMurid=0;
+
+function showToast(msg){
+
+let toast=document.getElementById("toast");
+
+toast.innerText=msg;
+
+toast.classList.add("show");
+
+setTimeout(()=>{
+toast.classList.remove("show");
+},2000);
+
+}
+
+function bukaPopup(id){
+
+document.getElementById("overlay").style.display="flex";
+
+document.querySelectorAll(".popup").forEach(p=>{
+p.style.display="none";
+});
+
+document.getElementById(id).style.display="block";
+
+}
+
+function tutupPopup(){
+
+document.getElementById("overlay").style.display="none";
+
+}
+
+function showConfirm(text,action){
+
+document.getElementById("confirmText").innerText=text;
+
+confirmAction=action;
+
+bukaPopup("popupConfirm");
+
+}
+
+function yesConfirm(){
+
+if(confirmAction){
+confirmAction();
+}
+
+tutupPopup();
+
+}
+
+function toggleMode(){
+
+document.body.classList.toggle("dark");
+
+}
+
+function bukaGuru(){
+
+bukaPopup("popupGuru");
+
+}
+
+function daftarGuru(){
+
+let nama=document.getElementById("guruNama").value.trim();
+
+let pass=document.getElementById("guruPass").value.trim();
+
+if(!nama || !pass){
+return showToast("Isi semua!");
+}
+
+db.ref("guru").once("value",snap=>{
+
+let data=snap.val();
+
+if(data){
+
+for(let id in data){
+
+if(data[id].nama.toLowerCase()===nama.toLowerCase()){
+return showToast("Nama sudah dipakai!");
+}
+
+}
+
+}
+
+let id="guru_"+Date.now();
+
+db.ref("guru/"+id).set({
+nama:nama,
+pass:pass
+}).then(()=>{
+showToast("Akun berhasil dibuat!");
+});
+
+});
+
+}
+
+function loginGuru(){
+
+let nama=document.getElementById("guruNama").value.trim();
+
+let pass=document.getElementById("guruPass").value.trim();
+
+db.ref("guru").once("value",snap=>{
+
+let data=snap.val();
+
+if(!data){
+return showToast("Belum ada akun!");
+}
+
+let ketemu=false;
+
+for(let id in data){
+
+let d=data[id];
+
+if(d.nama===nama && d.pass===pass){
+
+ketemu=true;
+
+guruId=id;
+
+user=d.nama;
+
+role="guru";
+
+document.getElementById("loginBox").style.display="none";
+
+tutupPopup();
+
+menuBox.innerHTML=`
+
+<div class="card">
+
+<h3>👨‍🏫 ${user}</h3>
+
+<button onclick="buatMapel()">
+➕ Buat Room Ujian
+</button>
+
+<button onclick="kelolaMapel()">
+⚙️ Kelola Mapel
+</button>
+
+<button onclick="lihatHasil()">
+📊 Hasil Murid
+</button>
+
+</div>
+
+`;
+
+}
+
+}
+
+if(!ketemu){
+showToast("Login gagal!");
+}
+
+});
+
+}
+
+function login(){
+
+user=document.getElementById("namaInput").value.trim();
+
+let kode=document.getElementById("kodeRoomMurid").value.trim();
+
+kelas=document.getElementById("kelasInput").value;
+
+if(!user){
+return showToast("Isi nama!");
+}
+
+if(!kode){
+return showToast("Isi kode room!");
+}
+
+if(!kelas){
+return showToast("Pilih kelas!");
+}
+
+db.ref("ulangan/mapel").once("value",snap=>{
+
+let data=snap.val();
+
+let ketemu=false;
+
+for(let id in data){
+
+let d=data[id];
+
+if(d.kode.toLowerCase()===kode.toLowerCase()){
+
+if(d.lock===true){
+showToast("Room sedang dikunci!");
+return;
+}
+
+ketemu=true;
+
+currentMapel=id;
+
+cekSudahUjian(d);
+
+}
+
+}
+
+if(!ketemu){
+showToast("Kode room salah!");
+}
+
+});
+
+}
+
+function cekSudahUjian(data){
+
+db.ref(
+"ulangan/hasil/"
++data.owner+"/"
++data.nama+"/kelas/"
++kelas
+).once("value",snap=>{
+
+let hasil=snap.val();
+
+let sudah=false;
+
+if(hasil){
+
+["clear","unclear"].forEach(jenis=>{
+
+if(hasil[jenis]){
+
+for(let id in hasil[jenis]){
+
+let d=hasil[jenis][id];
+
+if(
+d.nama.toLowerCase()
+===
+user.toLowerCase()
+){
+sudah=true;
+}
+
+}
+
+}
+
+});
+
+}
+
+if(sudah){
+showToast("Nama sudah mengerjakan!");
+return;
+}
+
+document.getElementById("loginBox").style.display="none";
+
+mulaiSoal(currentMapel,data.nama);
+
+});
+
+}
+
+function buatMapel(){
+
+contentBox.innerHTML=`
+
+<div class="card">
+
+<h3>Buat Room Ujian</h3>
+
+<input id="mapelInput"
+placeholder="Nama Mapel">
+
+<input id="kodeRoomInput"
+placeholder="Kode Room">
+
+<button onclick="simpanMapel()">
+Simpan
+</button>
+
+</div>
+
+`;
+
+}
+
+function simpanMapel(){
+
+let nama=document.getElementById("mapelInput").value.trim();
+
+let kode=document.getElementById("kodeRoomInput").value.trim();
+
+if(!nama){
+return showToast("Isi nama mapel!");
+}
+
+if(!kode){
+return showToast("Isi kode room!");
+}
+
+db.ref("ulangan/mapel").once("value",snap=>{
+
+let data=snap.val();
+
+let sama=false;
+
+if(data){
+
+for(let id in data){
+
+if(data[id].kode.toLowerCase()===kode.toLowerCase()){
+sama=true;
+}
+
+}
+
+}
+
+if(sama){
+return showToast("Kode sudah dipakai!");
+}
+
+db.ref("ulangan/mapel").push({
+
+nama:nama,
+kode:kode,
+lock:false,
+lihatNilai:false,
+owner:guruId,
+guru:user
+
+}).then(()=>{
+
+showToast("Room berhasil dibuat!");
+
+kelolaMapel();
+
+});
+
+});
+
+}
+
+function kelolaMapel(){
+
+db.ref("ulangan/mapel").once("value",snap=>{
+
+let data=snap.val();
+
+let html="";
+
+if(!data){
+
+html="<div class='card'>Belum ada mapel</div>";
+
+}else{
+
+for(let id in data){
+
+let d=data[id];
+
+if(d.owner!==guruId) continue;
+
+html+=`
+
+<div class="card">
+
+<h3>${d.nama}</h3>
+
+Kode : <b>${d.kode}</b><br><br>
+
+${d.lock ? "🔒 Dikunci":"🔓 Dibuka"}<br>
+
+${d.lihatNilai ? "👁️ Nilai Murid Terlihat":"🙈 Nilai Murid Disembunyikan"}
+
+<button onclick="halamanSoal('${id}')">
+✏️ Kelola Soal
+</button>
+
+<button onclick="toggleLock('${id}',${d.lock})">
+🔐 Lock / Unlock
+</button>
+
+<button onclick="toggleNilai('${id}',${d.lihatNilai})">
+👁️ Akses Nilai
+</button>
+
+<button onclick="hapusMapel('${id}')">
+🗑️ Hapus
+</button>
+
+</div>
+
+`;
+
+}
+
+}
+
+contentBox.innerHTML=html;
+
+});
+
+}
+
+function toggleNilai(id,status){
+
+db.ref("ulangan/mapel/"+id+"/lihatNilai")
+.set(!status)
+.then(()=>{
+kelolaMapel();
+});
+
+}
+
+function hapusMapel(id){
+
+showConfirm("Hapus mapel?",()=>{
+
+db.ref("ulangan/mapel/"+id)
+.remove()
+.then(()=>{
+
+showToast("Mapel dihapus!");
+
+kelolaMapel();
+
+});
+
+});
+
+}
+
+function toggleLock(id,lock){
+
+db.ref("ulangan/mapel/"+id+"/lock")
+.set(!lock)
+.then(()=>{
+kelolaMapel();
+});
+
+}
+
+function halamanSoal(id){
+
+currentMapel=id;
+
+db.ref("ulangan/mapel/"+id+"/soal")
+.once("value",snap=>{
+
+let data=snap.val();
+
+let html="<div id='soalContainer'></div>";
+
+html+=`
+
+<button onclick="tambahSoal()">
+➕ Tambah Soal
+</button>
+
+<button onclick="simpanSoal()">
+💾 Simpan Soal
+</button>
+
+<button onclick="kelolaMapel()">
+⬅️ Kembali
+</button>
+
+`;
+
+contentBox.innerHTML=html;
+
+let c=document.getElementById("soalContainer");
+
+if(!data){
+return;
+}
+
+for(let key in data){
+
+renderSoalEditor(c,data[key],key);
+
+}
+
+});
+
+}
+
+function renderSoalEditor(container,d,key){
+
+let div=document.createElement("div");
+
+div.className="card soalCard";
+
+div.innerHTML=`
+
+<select class="tipe" onchange="ubahTipe(this)">
+
+<option value="pg" ${d.tipe=="pg"?"selected":""}>
+PG
+</option>
+
+<option value="isian" ${d.tipe=="isian"?"selected":""}>
+Isian
+</option>
+
+</select>
+
+<input class="soal"
+value="${d.soal||""}"
+placeholder="Pertanyaan">
+
+<input class="gambar"
+value="${d.gambar||""}"
+placeholder="Link gambar"
+oninput="previewGambar(this)">
+
+<input type="file"
+accept="image/*"
+onchange="uploadGambar(this)">
+
+<img class="previewGambar"
+src="${d.gambar||""}"
+style="display:${d.gambar?"block":"none"}">
+
+<div class="pgBox"
+style="display:${d.tipe=="pg"?"block":"none"}">
+
+<input class="a"
+value="${d.a||""}"
+placeholder="Jawaban A">
+
+<input class="b"
+value="${d.b||""}"
+placeholder="Jawaban B">
+
+<input class="c"
+value="${d.c||""}"
+placeholder="Jawaban C">
+
+<input class="d"
+value="${d.d||""}"
+placeholder="Jawaban D">
+
+<select class="jawaban">
+
+<option ${d.benar=="A"?"selected":""}>A</option>
+<option ${d.benar=="B"?"selected":""}>B</option>
+<option ${d.benar=="C"?"selected":""}>C</option>
+<option ${d.benar=="D"?"selected":""}>D</option>
+
+</select>
+
+</div>
+
+<div class="isianBox"
+style="display:${d.tipe=="isian"?"block":"none"}">
+
+<input class="jawabanIsian"
+value="${d.benar||""}"
+placeholder="Jawaban benar">
+
+</div>
+
+<button onclick="hapusSoal('${key}')">
+🗑️ Hapus Soal
+</button>
+
+`;
+
+container.appendChild(div);
+
+}
+
+function ubahTipe(el){
+
+let p=el.parentElement;
+
+p.querySelector(".pgBox").style.display=
+el.value=="pg"?"block":"none";
+
+p.querySelector(".isianBox").style.display=
+el.value=="isian"?"block":"none";
+
+}
+
+function previewGambar(input){
+
+let parent=input.parentElement;
+
+let img=parent.querySelector(".previewGambar");
+
+if(input.value.trim()!=""){
+
+img.src=input.value;
+
+img.style.display="block";
+
+}else{
+
+img.style.display="none";
+
+}
+
+}
+
+function uploadGambar(input){
+
+let file=input.files[0];
+
+if(!file) return;
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+let parent=input.parentElement;
+
+parent.querySelector(".gambar").value=e.target.result;
+
+let img=parent.querySelector(".previewGambar");
+
+img.src=e.target.result;
+
+img.style.display="block";
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+function tambahSoal(){
+
+let c=document.getElementById("soalContainer");
+
+renderSoalEditor(c,{
+tipe:"pg"
+},"");
+
+}
+
+function simpanSoal(){
+
+let cards=document.querySelectorAll(".soalCard");
+
+db.ref("ulangan/mapel/"+currentMapel+"/soal")
+.remove()
+.then(()=>{
+
+cards.forEach(c=>{
+
+let tipe=c.querySelector(".tipe").value;
+
+let data={
+
+soal:c.querySelector(".soal").value,
+tipe:tipe,
+gambar:c.querySelector(".gambar").value
+
+};
+
+if(tipe=="pg"){
+
+data.a=c.querySelector(".a").value;
+data.b=c.querySelector(".b").value;
+data.c=c.querySelector(".c").value;
+data.d=c.querySelector(".d").value;
+data.benar=c.querySelector(".jawaban").value;
+
+}else{
+
+data.benar=
+c.querySelector(".jawabanIsian")
+.value
+.toLowerCase();
+
+}
+
+db.ref("ulangan/mapel/"+currentMapel+"/soal")
+.push(data);
+
+});
+
+showToast("Soal disimpan!");
+
+});
+
+}
+
+function hapusSoal(id){
+
+showConfirm("Hapus soal?",()=>{
+
+db.ref("ulangan/mapel/"+currentMapel+"/soal/"+id)
+.remove()
+.then(()=>{
+halamanSoal(currentMapel);
+});
+
+});
+
+}
+
+function shuffle(a){
+
+for(let i=a.length-1;i>0;i--){
+
+let j=Math.floor(Math.random()*(i+1));
+
+[a[i],a[j]]=[a[j],a[i]];
+
+}
+
+}
+
+function mulaiSoal(id,nama){
+
+sudahKirim=false;
+
+db.ref("ulangan/mapel/"+id+"/soal")
+.once("value",snap=>{
+
+let data=snap.val();
+
+if(!data){
+
+contentBox.innerHTML=
+"<div class='card'>Belum ada soal</div>";
+
+return;
+
+}
+
+soalRandom=Object.values(data);
+
+shuffle(soalRandom);
+
+let html="<h3>"+nama+"</h3>";
+
+soalRandom.forEach((d,i)=>{
+
+html+=`
+
+<div class="card">
+
+${i+1}. ${d.soal}
+
+${d.gambar ?
+`<img src="${d.gambar}"
+style="width:100%;margin-top:10px;border-radius:12px;">`
+:""}
+
+`;
+
+if(d.tipe=="pg"){
+
+let opsi=[
+{k:"A",t:d.a},
+{k:"B",t:d.b},
+{k:"C",t:d.c},
+{k:"D",t:d.d}
+];
+
+shuffle(opsi);
+
+opsi.forEach(o=>{
+
+html+=`
+
+<div class="option">
+
+<input type="radio"
+name="q${i}"
+value="${o.k}">
+
+${o.t}
+
+</div>
+
+`;
+
+});
+
+}else{
+
+html+=`
+<input id="q${i}">
+`;
+
+}
+
+html+="</div>";
+
+});
+
+html+=`
+
+<button onclick="kirim('${nama}',${soalRandom.length})">
+✅ Selesai
+</button>
+
+`;
+
+contentBox.innerHTML=html;
+
+});
+
+}
+
+function kirim(mapel,total){
+
+if(sudahKirim) return;
+
+sudahKirim=true;
+
+let benar=0;
+
+let detailJawaban=[];
+
+soalRandom.forEach((d,i)=>{
+
+let jawabanMurid="";
+let status=false;
+
+if(d.tipe=="pg"){
+
+let p=document.querySelector(
+'input[name=q'+i+']:checked'
+);
+
+if(p){
+
+jawabanMurid=p.value;
+
+if(p.value===d.benar){
+
+benar++;
+status=true;
+
+}
+
+}
+
+}else{
+
+let isi=document
+.getElementById("q"+i)
+.value
+.toLowerCase()
+.trim();
+
+jawabanMurid=isi;
+
+let arr=d.benar.split(",");
+
+if(arr.includes(isi)){
+
+benar++;
+status=true;
+
+}
+
+}
+
+detailJawaban.push({
+
+soal:d.soal,
+gambar:d.gambar || "",
+jawaban:jawabanMurid,
+benar:d.benar,
+status:status,
+tipe:d.tipe,
+
+a:d.a || "",
+b:d.b || "",
+c:d.c || "",
+d:d.d || ""
+
+});
+
+});
+
+nilaiMurid=Math.round((benar/total)*100);
+
+db.ref(
+"ulangan/mapel/"+currentMapel
+)
+.once("value",snap=>{
+
+let data=snap.val();
+
+db.ref(
+"ulangan/hasil/"
++data.owner+"/"
++mapel+"/kelas/"
++kelas+"/clear"
+).push({
+
+nama:user,
+kelas:kelas,
+nilai:nilaiMurid,
+guru:data.guru,
+jawaban:detailJawaban
+
+}).then(()=>{
+
+if(data.lihatNilai){
+
+contentBox.innerHTML=`
+
+<div class="card">
+<h2>Nilai : ${nilaiMurid}</h2>
+</div>
+
+`;
+
+}else{
+
+contentBox.innerHTML=`
+
+<div class="card">
+
+<h2>Jawaban Berhasil Dikirim</h2>
+
+<p>Nilai disembunyikan guru</p>
+
+</div>
+
+`;
+
+}
+
+});
+
+});
+
+}
+
+function autoSubmit(){
+
+if(!sudahKirim && soalRandom.length>0){
+
+sudahKirim=true;
+
+db.ref(
+"ulangan/mapel/"+currentMapel
+)
+.once("value",snap=>{
+
+let data=snap.val();
+
+db.ref(
+"ulangan/hasil/"
++data.owner+"/"
++data.nama+"/kelas/"
++kelas+"/unclear"
+).push({
+
+nama:user,
+kelas:kelas,
+nilai:0,
+guru:data.guru,
+auto:true
+
+});
+
+contentBox.innerHTML=`
+
+<div class='card'>
+
+<h2>Nilai : 0</h2>
+
+<p>Auto Submit</p>
+
+</div>
+
+`;
+
+});
+
+}
+
+}
+
+function lihatHasil(){
+
+db.ref("ulangan/hasil/"+guruId)
+.once("value",snap=>{
+
+let data=snap.val();
+
+let html="";
+
+if(!data){
+
+html="<div class='card'>Belum ada hasil</div>";
+
+}else{
+
+for(let mapel in data){
+
+html+=`
+
+<div class="card">
+
+<h3>${mapel}</h3>
+
+<button onclick="lihatKelas('${mapel}')">
+📂 Lihat Kelas
+</button>
+
+</div>
+
+`;
+
+}
+
+}
+
+contentBox.innerHTML=html;
+
+});
+
+}
+
+function lihatKelas(mapel){
+
+db.ref("ulangan/hasil/"+guruId+"/"+mapel+"/kelas")
+.once("value",snap=>{
+
+let data=snap.val();
+
+let html=`
+
+<button onclick="lihatHasil()">
+⬅️ Kembali
+</button>
+
+<h2>${mapel}</h2>
+
+`;
+
+if(!data){
+
+html+="<div class='card'>Belum ada kelas</div>";
+
+}else{
+
+for(let kelas in data){
+
+html+=`
+
+<div class="card">
+
+<h3>${kelas}</h3>
+
+<button onclick="lihatDetailMapel('${mapel}','${kelas}')">
+📊 Lihat Hasil
+</button>
+
+</div>
+
+`;
+
+}
+
+}
+
+contentBox.innerHTML=html;
+
+});
+
+}
+
+function lihatDetailMapel(mapel,kelasNama){
+
+db.ref(
+"ulangan/hasil/"
++guruId+"/"
++mapel+"/kelas/"
++kelasNama
+)
+.once("value",snap=>{
+
+let data=snap.val();
+
+let html=`
+
+<button onclick="lihatKelas('${mapel}')">
+⬅️ Kembali
+</button>
+
+<h2>${mapel} - ${kelasNama}</h2>
+
+`;
+
+html+=`
+<div class="card">
+<h3>✅ CLEAR</h3>
+</div>
+`;
+
+if(data && data.clear){
+
+for(let id in data.clear){
+
+let d=data.clear[id];
+
+html+=`
+
+<div class="card">
+
+${d.nama} - ${d.nilai}
+
+<button onclick='lihatJawaban(${JSON.stringify(d.jawaban)})'>
+📄 Jawaban
+</button>
+
+<button onclick="hapusHasil(
+'${mapel}',
+'${kelasNama}',
+'clear',
+'${id}'
+)">
+🗑️
+</button>
+
+</div>
+
+`;
+
+}
+
+}
+
+html+=`
+<div class="card">
+<h3>⚠️ UNCLEAR</h3>
+</div>
+`;
+
+if(data && data.unclear){
+
+for(let id in data.unclear){
+
+let d=data.unclear[id];
+
+html+=`
+
+<div class="card">
+
+${d.nama} - ${d.nilai}
+
+<br>Auto Submit
+
+<button onclick="hapusHasil(
+'${mapel}',
+'${kelasNama}',
+'unclear',
+'${id}'
+)">
+🗑️
+</button>
+
+</div>
+
+`;
+
+}
+
+}
+
+contentBox.innerHTML=html;
+
+});
+
+}
+
+function lihatJawaban(jawaban){
+
+let html=`
+
+<button onclick="lihatHasil()">
+⬅️ Kembali
+</button>
+
+`;
+
+jawaban.forEach((j,i)=>{
+
+html+=`
+
+<div class="card">
+
+<h3>Soal ${i+1}</h3>
+
+${j.soal}<br><br>
+
+${j.gambar ?
+`<img src="${j.gambar}"
+style="width:100%;border-radius:12px;">`
+:""}
+
+`;
+
+if(j.tipe=="pg"){
+
+html+=`
+
+A. ${j.a}<br>
+B. ${j.b}<br>
+C. ${j.c}<br>
+D. ${j.d}<br><br>
+
+`;
+
+}
+
+html+=`
+
+Jawaban Murid : ${j.jawaban}<br>
+Jawaban Benar : ${j.benar}<br><br>
+
+${j.status ? "✅ Benar":"❌ Salah"}
+
+</div>
+
+`;
+
+});
+
+contentBox.innerHTML=html;
+
+}
+
+function hapusHasil(mapel,kelasNama,jenis,id){
+
+showConfirm("Hapus hasil?",()=>{
+
+db.ref(
+"ulangan/hasil/"
++guruId+"/"
++mapel+"/kelas/"
++kelasNama+"/"
++jenis+"/"
++id
+)
+.remove()
+.then(()=>{
+lihatDetailMapel(mapel,kelasNama);
+});
+
+});
+
+}
+
+document.addEventListener(
+"visibilitychange",
+()=>{
+
+if(document.hidden){
+autoSubmit();
+}
+
+}
+);
+
+window.addEventListener(
+"blur",
+autoSubmit
+);
+
+window.addEventListener(
+"pagehide",
+autoSubmit
+);
+
+</script>
+
+</body>
+</html>
