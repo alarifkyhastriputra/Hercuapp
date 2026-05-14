@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peraturan Hercu OTG</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    background: linear-gradient(135deg, #dcefff, #b7d9ff, #7ab8ff);
+    color:#123456;
+    overflow-x:hidden;
+    min-height:100vh;
+    padding:20px;
+}
+
+/* Glow Background */
+body::before{
+    content:"";
+    position:fixed;
+    width:500px;
+    height:500px;
+    background: radial-gradient(circle, rgba(0,119,255,0.35), transparent);
+    top:-120px;
+    left:-120px;
+    filter:blur(120px);
+    z-index:-1;
+}
+
+body::after{
+    content:"";
+    position:fixed;
+    width:450px;
+    height:450px;
+    background: radial-gradient(circle, rgba(255,255,255,0.9), transparent);
+    bottom:-150px;
+    right:-100px;
+    filter:blur(120px);
+    z-index:-1;
+}
+
+/* Container */
+.container{
+    max-width:950px;
+    margin:auto;
+    animation:fadeIn 1s ease;
+}
+
+/* Header */
+.title-box{
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(14px);
+    border:1px solid rgba(255,255,255,0.7);
+    padding:25px;
+    border-radius:22px;
+    text-align:center;
+    box-shadow:0 8px 22px rgba(0,0,0,0.08);
+    margin-bottom:25px;
+}
+
+h1{
+    color:#0066cc;
+    font-size:34px;
+    margin-bottom:10px;
+    text-shadow:0 0 12px rgba(0,102,204,0.25);
+}
+
+.subtitle{
+    color:#24527a;
+    font-size:15px;
+}
+
+/* Section */
+.section{
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(14px);
+    border:1px solid rgba(255,255,255,0.7);
+    padding:22px;
+    border-radius:20px;
+    margin-bottom:20px;
+    transition:0.3s ease;
+    box-shadow:0 8px 22px rgba(0,0,0,0.08);
+}
+
+.section:hover{
+    transform:translateY(-4px);
+    box-shadow:0 15px 30px rgba(0,102,204,0.15);
+}
+
+h2{
+    color:#00509d;
+    margin-bottom:15px;
+    font-size:22px;
+}
+
+ol{
+    margin-left:20px;
+}
+
+li{
+    margin-bottom:10px;
+    line-height:1.8;
+}
+
+/* Note */
+.note{
+    background: rgba(255,255,255,0.65);
+    border-left:5px solid #0077ff;
+    padding:18px;
+    border-radius:14px;
+    margin-top:25px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.08);
+    line-height:1.8;
+}
+
+/* Footer */
+footer{
+    text-align:center;
+    margin-top:40px;
+    color:#24527a;
+    opacity:0.8;
+    font-size:13px;
+}
+
+/* Animation */
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* Responsive */
+@media(max-width:600px){
+
+    h1{
+        font-size:27px;
+    }
+
+    h2{
+        font-size:19px;
+    }
+
+    .section,
+    .title-box{
+        padding:18px;
+    }
+
+    li{
+        font-size:14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="title-box">
+        <h1>📘 PERATURAN HERCU OTG</h1>
+        <p class="subtitle">
+            Tahun Ajaran 2026/2027
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>1. Login dan Identitas</h2>
+        <ol>
+            <li>Setiap murid wajib mengisi nama lengkap dan memilih kelas saat login.</li>
+            <li>Guru menggunakan akun khusus dengan password resmi untuk mengakses fitur admin.</li>
+            <li>Jangan memberikan akun atau password kepada orang lain.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>2. Pengelolaan Mapel dan Soal (Untuk Guru)</h2>
+        <ol>
+            <li>Guru berhak membuat, mengedit, atau menghapus mata pelajaran.</li>
+            <li>Mapel dapat dikunci sementara agar murid tidak dapat mengakses sebelum waktunya.</li>
+            <li>Soal dapat berupa pilihan ganda maupun isian sesuai kebutuhan.</li>
+            <li>Guru bertanggung jawab memastikan soal sesuai pembelajaran dan tidak terjadi kesalahan jawaban.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>3. Pengerjaan Soal (Untuk Murid)</h2>
+        <ol>
+            <li>Murid hanya dapat mengerjakan mapel yang telah dibuka.</li>
+            <li>Jawaban wajib dikerjakan secara jujur dan mandiri.</li>
+            <li>Setelah menekan tombol selesai, jawaban tidak dapat diubah kembali.</li>
+            <li>Nilai dapat muncul otomatis setelah pengerjaan selesai.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>4. Nilai dan Hasil</h2>
+        <ol>
+            <li>Nilai dihitung berdasarkan jumlah jawaban benar.</li>
+            <li>Guru dapat melihat hasil berdasarkan mapel, kelas, maupun murid.</li>
+            <li>Hasil dapat dihapus oleh guru jika terjadi kesalahan atau ulangan ulang.</li>
+            <li>Nilai murid bersifat rahasia dan digunakan untuk pembelajaran.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>5. Aturan Anti-Cheat</h2>
+        <ol>
+            <li>Meninggalkan halaman atau berpindah aplikasi saat ujian dapat menyebabkan nilai otomatis 0.</li>
+            <li>Dilarang mencari jawaban dari sumber lain selama pengerjaan berlangsung.</li>
+            <li>Pelanggaran akan ditindak sesuai keputusan guru.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>6. Etika dan Kerahasiaan</h2>
+        <ol>
+            <li>Gunakan Hercu OTG dengan jujur dan bertanggung jawab.</li>
+            <li>Data murid hanya digunakan untuk kebutuhan pembelajaran.</li>
+            <li>Dilarang menyebarkan soal atau jawaban sebelum ujian selesai.</li>
+            <li>Pelanggaran etika dapat berpengaruh pada nilai maupun tindakan disiplin.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>7. Perubahan dan Fitur Baru</h2>
+        <ol>
+            <li>Perubahan sistem hanya dilakukan oleh guru dan pengembang resmi.</li>
+            <li>Fitur baru dapat ditambahkan sesuai pengembangan aplikasi.</li>
+            <li>Penggunaan aplikasi harus tetap fokus pada kegiatan belajar.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>8. Sanksi Pelanggaran</h2>
+        <ol>
+            <li>Jawaban tidak jujur dapat menyebabkan nilai otomatis 0.</li>
+            <li>Menyebarkan soal atau jawaban dapat dikenakan peringatan maupun tindakan disiplin.</li>
+            <li>Mengganggu sistem aplikasi dapat menyebabkan akun diblokir sementara atau permanen.</li>
+        </ol>
+    </div>
+
+    <div class="note">
+        <strong>📌 Catatan:</strong><br><br>
+        Dengan menggunakan Hercu OTG, seluruh pengguna dianggap telah membaca, memahami,
+        dan menyetujui semua peraturan yang berlaku demi kelancaran pembelajaran bersama.
+    </div>
+
+    <footer>
+        © 2026 Hercu OTG — All Rights Reserved
+    </footer>
+
+</div>
+
+</body>
+</html>
